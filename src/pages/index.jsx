@@ -24,10 +24,10 @@ const HomePage = () => {
     },
   })
   const src = photo.url
-  const getFaqsCallback = useCallback(async () => {
+  const getUrl = useCallback(async () => {
     try {
-      const { data } = await getData('Hello World')
-      console.log({ data })
+      const res = await getData('Hello World')
+      console.log(res)
     } catch (err) {
       console.error(err)
     }
@@ -38,7 +38,7 @@ const HomePage = () => {
   }
   useEffect(
     () => {
-      getFaqsCallback()
+      getUrl()
     },
     [],
   )
@@ -46,7 +46,7 @@ const HomePage = () => {
   <>
     <Head>
       <title>
-        CodeOwlers | Image Processing
+        Code Owlers | Image Processing
       </title>
     </Head>
     <Box
