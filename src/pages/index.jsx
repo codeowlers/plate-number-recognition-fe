@@ -1,12 +1,23 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react'
 import {
   Box,
-  Card, CardContent,
-  Container, Grid,
+  Card,
+  CardContent,
+  Container,
+  FormControl,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput, Tooltip,
   Typography,
 } from '@mui/material'
 import Head from 'next/head'
 import Image from 'next/image'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import { toast } from 'react-hot-toast'
 import { getData } from '../api'
 import { FileDropzone } from '../components/file-drop-zone'
 import { UploadFile } from '../hooks'
@@ -14,6 +25,8 @@ import { Logo } from '../components/logo'
 
 const HomePage = () => {
   const [files, setFiles] = useState([])
+  const [response, setResponse] = useState({})
+  const [loading, setLoading] = useState(false)
   const [photo, handlePhotoUpload] = UploadFile({
     location: 'python',
     fileTypes: ['image/jpg', 'image/jpeg', 'image/png'],
@@ -23,25 +36,31 @@ const HomePage = () => {
       fileSize: 'File Should Not Exceed 200MB',
     },
   })
-  const src = photo.url
-  const getUrl = useCallback(async () => {
-    try {
-      const res = await getData('Hello World')
-      console.log(res)
-    } catch (err) {
-      console.error(err)
+  const src = useMemo(() => photo.url, [photo.url])
+  const responseUrl = useMemo(() => response?.url, [response.url])
+  const getUrl = useCallback(async (url) => {
+    if (url) {
+      setLoading(true)
+      try {
+        return await getData(url)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
     }
   }, [])
   const handleDrop = (newFiles) => {
     handlePhotoUpload(newFiles)
     setFiles(newFiles)
   }
-  useEffect(
-    () => {
-      getUrl()
-    },
-    [],
-  )
+  useEffect(() => {
+    if (photo.url && !response.url) {
+      getUrl(photo.url).then(r => {
+        setResponse({ url: r.url, plateNumber: r.plateNumber })
+      })
+    }
+  }, [getUrl, photo.url, response.url])
   return (
   <>
     <Head>
@@ -130,7 +149,7 @@ const HomePage = () => {
                 xs={12}
               >
                 <FileDropzone
-                  progress={photo.url}
+                  progress={photo.progress}
                   active={photo.active}
                   accept="image/*"
                   files={files}
@@ -185,22 +204,50 @@ const HomePage = () => {
                         width={100}
                       />
                     </Grid>
-                    <Grid item xs={12}>
-                      <Typography
-                        color="textSecondary"
-                        variant="body1"
-                        sx={{ my: 1 }}
-                      >
-                        Result
-                      </Typography>
-                      <Image
-                        loader={() => src}
-                        src={src}
-                        layout="responsive"
-                        height={100}
-                        width={100}
-                      />
-                    </Grid>
+                    {loading ? (<p>Loading...</p>) : (
+                      <Grid item xs={12}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12}>
+                            <Typography
+                              color="textSecondary"
+                              variant="body1"
+                              sx={{ my: 1 }}
+                            >
+                              Result
+                            </Typography>
+                            <img
+                              src={responseUrl}
+                              alt="response"
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <FormControl fullWidth variant="outlined">
+                              <InputLabel htmlFor="outlined-adornment-password">Plate Numbers</InputLabel>
+                              <OutlinedInput
+                                disabled
+                                id="outlined-adornment-password"
+                                type="text"
+                                value={response?.plateNumber || ''}
+                                endAdornment={(
+                                  <Tooltip title="Copy">
+                                    <InputAdornment position="end">
+                                      <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => { navigator.clipboard.writeText(response?.plateNumber).then(() => toast.success('Plate Number Copied to clipboard')) }}
+                                        edge="end"
+                                      >
+                                        <ContentCopyIcon />
+                                      </IconButton>
+                                    </InputAdornment>
+                                  </Tooltip>
+                                )}
+                                label="Password"
+                              />
+                            </FormControl>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    )}
                   </Grid>
                 </Grid>
               </Grid>

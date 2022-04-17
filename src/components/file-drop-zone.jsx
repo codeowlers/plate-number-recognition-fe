@@ -115,10 +115,10 @@ export const FileDropzone = (props) => {
           </Box>
         </Box>
       </Box>
-      {files.length > 0 && (
+      {files?.length > 0 && (
         <Box sx={{ mt: 2 }}>
           <List>
-            {files.map((file, index) => (
+            {files?.map((file, index) => (
               <>
                 <ListItem
                   key={index}
