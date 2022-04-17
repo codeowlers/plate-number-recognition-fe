@@ -10,7 +10,7 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  InputLabel,
+  InputLabel, LinearProgress,
   OutlinedInput, Tooltip,
   Typography,
 } from '@mui/material'
@@ -204,7 +204,7 @@ const HomePage = () => {
                         width={100}
                       />
                     </Grid>
-                    {loading ? (<p>Loading...</p>) : (
+                    {loading ? (<Grid item xs={12}><LinearProgress color="success" /></Grid>) : (
                       <Grid item xs={12}>
                         <Grid container spacing={2}>
                           <Grid item xs={12}>
