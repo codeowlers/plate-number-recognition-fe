@@ -40,7 +40,7 @@ const HomePage = () => {
   const src = useMemo(() => photo.url, [photo.url])
   // const responseUrl = useMemo(() => response?.url, [response.url])
   const getUrl = useCallback(async (url) => {
-    if (epochs > 0 && epochs < 7) {
+    if (epochs >= 0 && epochs < 7) {
       if (url) {
         setLoading(true)
         try {
