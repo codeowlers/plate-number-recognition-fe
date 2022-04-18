@@ -2,7 +2,7 @@ import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react'
 import {
-  Box,
+  Box, Button,
   Card,
   CardContent,
   Container,
@@ -11,7 +11,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel, LinearProgress,
-  OutlinedInput, Tooltip,
+  OutlinedInput, TextField, Tooltip,
   Typography,
 } from '@mui/material'
 import Head from 'next/head'
@@ -27,6 +27,7 @@ const HomePage = () => {
   const [files, setFiles] = useState([])
   const [response, setResponse] = useState({})
   const [loading, setLoading] = useState(false)
+  const [epochs, setEpochs] = useState('')
   const [photo, handlePhotoUpload] = UploadFile({
     location: 'python',
     fileTypes: ['image/jpg', 'image/jpeg', 'image/png'],
@@ -53,7 +54,7 @@ const HomePage = () => {
     }
   }, [])
   const handleDrop = (newFiles) => {
-    handlePhotoUpload(newFiles)
+    // handlePhotoUpload(newFiles)
     setFiles(newFiles)
   }
   useEffect(() => {
@@ -158,13 +159,39 @@ const HomePage = () => {
                 md={8}
                 xs={12}
               >
-                <FileDropzone
-                  progress={photo.progress}
-                  active={photo.active}
-                  accept="image/*"
-                  files={files}
-                  onDrop={handleDrop}
-                />
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <FileDropzone
+                      progress={photo.progress}
+                      active={photo.active}
+                      accept="image/*"
+                      files={files}
+                      onDrop={handleDrop}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="outlined-basic"
+                      label="Epochs"
+                      variant="outlined"
+                      type="number"
+                      onChange={(e) => setEpochs(e.target.value)}
+                      value={epochs}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={() => {
+                        handlePhotoUpload(files)
+                      }}
+                      variant="contained"
+                      disabled={files.length === 0 || epochs.length === 0}
+                    >
+                      Send
+                    </Button>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </CardContent>
