@@ -5,8 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "prod": "next start",
-    "lint": "next lint"
+    "prod": "next start -p 8001",
+    "lint": "next lint",
+    "dev:up": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "prod:up": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d",
+    "restart": "docker-compose down && docker image rm fyp-fe_fyp-fe && yarn run prod:up",
+    "prod:test": "docker-compose down && docker image rm fyp-fe_fyp-fe && git pull && yarn run prod:up"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
