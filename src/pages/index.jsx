@@ -58,7 +58,7 @@ const HomePage = () => {
       photo.setUrl('')
       setEpochs('')
     }
-  }, [epochs])
+  }, [epochs, photo])
   const handleDrop = (newFiles) => {
     // handlePhotoUpload(newFiles)
     setFiles(newFiles)
