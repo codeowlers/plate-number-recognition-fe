@@ -37,12 +37,14 @@ const HomePage = () => {
     },
   })
   const src = useMemo(() => photo.url, [photo.url])
-  const responseUrl = useMemo(() => response?.url, [response.url])
+  // const responseUrl = useMemo(() => response?.url, [response.url])
   const getUrl = useCallback(async (url) => {
     if (url) {
       setLoading(true)
       try {
-        return await getData(url)
+        const res = await getData(4, url)
+        console.log(res)
+        return res
       } catch (err) {
         console.error(err)
       } finally {
@@ -55,12 +57,20 @@ const HomePage = () => {
     setFiles(newFiles)
   }
   useEffect(() => {
-    if (photo.url && !response.url) {
-      getUrl(photo.url).then(r => {
-        setResponse({ url: r.url, plateNumber: r.plateNumber })
+    if (photo.url && !response.predictions) {
+      getUrl(photo.url).then(({
+        plate_contour,
+        plate_segmented,
+        predictions,
+        plate_number,
+      }) => {
+        setResponse({
+          // eslint-disable-next-line camelcase
+          plate_contour, plate_segmented, predictions, plate_number,
+        })
       })
     }
-  }, [getUrl, photo.url, response.url])
+  }, [getUrl, photo.url, response.predictions, response.url])
   return (
   <>
     <Head>
@@ -213,10 +223,36 @@ const HomePage = () => {
                               variant="body1"
                               sx={{ my: 1 }}
                             >
-                              Result
+                              Plate Contour
                             </Typography>
                             <img
-                              src={responseUrl}
+                              src={response?.plate_contour}
+                              alt="response"
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography
+                              color="textSecondary"
+                              variant="body1"
+                              sx={{ my: 1 }}
+                            >
+                              Plate Segmented
+                            </Typography>
+                            <img
+                              src={response?.plate_segmented}
+                              alt="response"
+                            />
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Typography
+                              color="textSecondary"
+                              variant="body1"
+                              sx={{ my: 1 }}
+                            >
+                              Predictions
+                            </Typography>
+                            <img
+                              src={response?.predictions}
                               alt="response"
                             />
                           </Grid>
@@ -227,13 +263,13 @@ const HomePage = () => {
                                 disabled
                                 id="outlined-adornment-password"
                                 type="text"
-                                value={response?.plateNumber || ''}
+                                value={response?.plate_number || ''}
                                 endAdornment={(
                                   <Tooltip title="Copy">
                                     <InputAdornment position="end">
                                       <IconButton
                                         aria-label="toggle password visibility"
-                                        onClick={() => { navigator.clipboard.writeText(response?.plateNumber).then(() => toast.success('Plate Number Copied to clipboard')) }}
+                                        onClick={() => { navigator.clipboard.writeText(response?.plate_number).then(() => toast.success('Plate Number Copied to clipboard')) }}
                                         edge="end"
                                       >
                                         <ContentCopyIcon />
