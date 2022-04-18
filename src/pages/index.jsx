@@ -42,7 +42,7 @@ const HomePage = () => {
     if (url) {
       setLoading(true)
       try {
-        const res = await getData(4, url)
+        const res = await getData(1, url)
         console.log(res)
         return res
       } catch (err) {
