@@ -40,19 +40,25 @@ const HomePage = () => {
   const src = useMemo(() => photo.url, [photo.url])
   // const responseUrl = useMemo(() => response?.url, [response.url])
   const getUrl = useCallback(async (url) => {
-    if (url) {
-      setLoading(true)
-      try {
-        const res = await getData(1, url)
-        console.log(res)
-        return res
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
+    if (epochs > 0 && epochs < 7) {
+      if (url) {
+        setLoading(true)
+        try {
+          const res = await getData(epochs, url)
+          console.log(res)
+          return res
+        } catch (err) {
+          console.error(err)
+        } finally {
+          setLoading(false)
+        }
       }
+    } else {
+      setFiles([])
+      photo.setUrl('')
+      setEpochs('')
     }
-  }, [])
+  }, [epochs])
   const handleDrop = (newFiles) => {
     // handlePhotoUpload(newFiles)
     setFiles(newFiles)
@@ -186,7 +192,7 @@ const HomePage = () => {
                         handlePhotoUpload(files)
                       }}
                       variant="contained"
-                      disabled={files.length === 0 || epochs.length === 0}
+                      disabled={files.length === 0 || epochs.length === 0 || photo.active || loading}
                     >
                       Send
                     </Button>
