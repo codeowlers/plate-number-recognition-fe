@@ -32,7 +32,7 @@ const HomePage = () => {
       submit: null,
     },
     validationSchema: Yup.object({
-      epochs: Yup.number().min(0, 'At least 0').max(7, 'At most 7').required('Required'),
+      epochs: Yup.number().min(0, 'At least 0').max(11, 'At most 11').required('Required'),
     }),
     onSubmit: async (values, helpers) => {
       try {
